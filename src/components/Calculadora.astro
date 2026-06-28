@@ -1,0 +1,104 @@
+---
+// Calculadora de autonomía real. Modelo simple y transparente:
+// consumo base 8 Wh/km, ajustado por terreno, nivel de asistencia y peso.
+---
+
+<div class="calc" id="calculadora">
+  <div class="calc-cab">
+    <strong>Calculadora de autonomía real</strong>
+    <span>Estima los km de verdad según tu uso, no los del catálogo</span>
+  </div>
+
+  <div class="fila">
+    <label for="wh">Batería</label>
+    <input type="range" id="wh" min="150" max="720" value="417" step="1" />
+    <output id="wh-out">417 Wh</output>
+  </div>
+  <div class="fila">
+    <label for="peso">Peso del ciclista</label>
+    <input type="range" id="peso" min="50" max="120" value="78" step="1" />
+    <output id="peso-out">78 kg</output>
+  </div>
+  <div class="fila">
+    <label for="terreno">Terreno</label>
+    <select id="terreno">
+      <option value="1.0">Llano (ciudad / paseo)</option>
+      <option value="1.3" selected>Mixto (alguna cuesta)</option>
+      <option value="1.7">Montañoso</option>
+    </select>
+  </div>
+  <div class="fila">
+    <label for="asist">Asistencia</label>
+    <select id="asist">
+      <option value="1.0">Eco</option>
+      <option value="1.4" selected>Media</option>
+      <option value="1.9">Turbo</option>
+    </select>
+  </div>
+
+  <div class="calc-res">
+    <div class="caja real">
+      <span>Autonomía real estimada</span>
+      <strong><span id="real">38</span> km</strong>
+    </div>
+    <div class="caja cat">
+      <span>Lo que promete el fabricante</span>
+      <strong><span id="claim">74</span> km</strong>
+    </div>
+  </div>
+  <p class="calc-pie">En este uso pierdes <span id="gap">49%</span> respecto al dato del catálogo.</p>
+</div>
+
+<style>
+  .calc { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 14px; padding: 22px; margin: 18px 0; }
+  .calc-cab { margin-bottom: 18px; }
+  .calc-cab strong { display: block; font-size: 17px; }
+  .calc-cab span { color: var(--tinta-suave); font-size: 14px; }
+  .fila { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .fila label { min-width: 140px; color: var(--tinta-suave); font-size: 14px; }
+  .fila input[type='range'] { flex: 1; accent-color: var(--acento); }
+  .fila select { flex: 1; padding: 7px 10px; border: 1px solid var(--linea); border-radius: 8px; font-size: 14px; background: #fff; }
+  .fila output { min-width: 64px; text-align: right; font-weight: 600; font-size: 14px; }
+  .calc-res { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; }
+  .caja { border-radius: 10px; padding: 14px 16px; }
+  .caja > span { font-size: 13px; display: block; margin-bottom: 4px; }
+  .caja strong { white-space: nowrap; }
+  .caja strong { font-size: 26px; }
+  .caja.real { background: var(--acento-bg); }
+  .caja.real span, .caja.real strong { color: var(--acento); }
+  .caja.cat { background: #f0f3f2; }
+  .caja.cat span, .caja.cat strong { color: var(--tinta-suave); }
+  .calc-pie { font-size: 14px; color: var(--tinta-suave); margin: 14px 0 0; }
+  .calc-pie span { font-weight: 600; color: var(--tinta); }
+  @media (max-width: 640px) { .fila { flex-wrap: wrap; } .fila label { min-width: 100%; } }
+</style>
+
+<script>
+  const wh = document.getElementById('wh');
+  const peso = document.getElementById('peso');
+  const terreno = document.getElementById('terreno');
+  const asist = document.getElementById('asist');
+
+  function calc() {
+    const Wh = +wh.value;
+    const P = +peso.value;
+    const T = +terreno.value;
+    const A = +asist.value;
+    const pesoFactor = 1 + (P - 75) * 0.008;
+    const consumo = 8 * T * A * pesoFactor;
+    const real = Math.round(Wh / consumo);
+    const claim = Math.round(Wh / 5.6);
+    const gap = Math.max(0, Math.round((1 - real / claim) * 100));
+    document.getElementById('wh-out').textContent = Wh + ' Wh';
+    document.getElementById('peso-out').textContent = P + ' kg';
+    document.getElementById('real').textContent = real;
+    document.getElementById('claim').textContent = claim;
+    document.getElementById('gap').textContent = gap + '%';
+  }
+
+  [wh, peso, terreno, asist].forEach((el) => {
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+  calc();
+</script>

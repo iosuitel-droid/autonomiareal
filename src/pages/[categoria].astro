@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import { CATEGORIAS, categoriaInfo, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplido, precio, parejas } from '../lib/ebikes.js';
+
+export function getStaticPaths() {
+  return CATEGORIAS.map((c) => ({ params: { categoria: c.slug }, props: { cat: c } }));
+}
+
+const { cat } = Astro.props;
+const items = ordenadaPorReal(porCategoria(cat.slug));
+const pares = parejas(cat.slug);
+---
+
+<Base title={cat.nombre} descripcion={`${cat.nombre}: autonomía real vs catálogo, con fuente. ${cat.intro}`}>
+  <p><a href="/">← Inicio</a></p>
+  <span class="pill">Datos con fuente</span>
+  <h1>{cat.nombre}</h1>
+  <p class="subtitulo">{cat.intro}</p>
+
+  <table class="datos">
+    <thead>
+      <tr><th>Modelo</th><th>Batería</th><th>Catálogo</th><th>Real</th><th>Cumple</th><th>Precio</th></tr>
+    </thead>
+    <tbody>
+      {items.map((b) => (
+        <tr>
+          <td><a href={`/ficha/${b.slug}`}>{b.nombre}</a></td>
+          <td>{b.bateria_wh} Wh</td>
+          <td>{b.autonomia_catalogo_km} km</td>
+          <td class={b.autonomia_real_max_km == null ? 'sindato' : 'real'}>{rangoReal(b)}</td>
+          <td>{porcentajeCumplido(b) == null ? '—' : `${porcentajeCumplido(b)}%`}</td>
+          <td>{precio(b)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2>Comparativas cara a cara</h2>
+  <p class="subtitulo">¿Prefieres elegir tú? Usa el <a href="/comparador">comparador interactivo</a>.</p>
+  <ul>
+    {pares.slice(0, 10).map(([a, b]) => (
+      <li><a href={`/comparar/${a.slug}-vs-${b.slug}`}>{a.nombre} vs {b.nombre}</a></li>
+    ))}
+  </ul>
+  <p class="fuentes">{pares.length} comparativas generadas automáticamente para esta categoría.</p>
+</Base>

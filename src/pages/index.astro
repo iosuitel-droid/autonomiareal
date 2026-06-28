@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculadora from '../components/Calculadora.astro';
+import { CATEGORIAS, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplido, precio } from '../lib/ebikes.js';
+---
+
+<Base
+  title="Autonomía real de la micromovilidad eléctrica"
+  descripcion="La autonomía real de bicis y patines eléctricos según reseñas y propietarios, no según el catálogo. Comparativas, calculadora y datos con fuente."
+>
+  <span class="pill">Datos con fuente · sin postureo de catálogo</span>
+  <h1>La autonomía de verdad, no la del folleto</h1>
+  <p class="subtitulo">
+    Los fabricantes prometen el doble de lo que aguantan. Aquí está lo que reportan propietarios y reseñas, con fuente, para bicis y patines eléctricos.
+  </p>
+
+  {CATEGORIAS.map((cat) => {
+    const items = ordenadaPorReal(porCategoria(cat.slug)).slice(0, 5);
+    return (
+      <section>
+        <h2>{cat.nombre}</h2>
+        <p class="subtitulo">{cat.intro}</p>
+        <table class="datos">
+          <thead>
+            <tr><th>Modelo</th><th>Catálogo</th><th>Real</th><th>Cumple</th><th>Precio</th></tr>
+          </thead>
+          <tbody>
+            {items.map((b) => (
+              <tr>
+                <td><a href={`/ficha/${b.slug}`}>{b.nombre}</a></td>
+                <td>{b.autonomia_catalogo_km} km</td>
+                <td class={b.autonomia_real_max_km == null ? 'sindato' : 'real'}>{rangoReal(b)}</td>
+                <td>{porcentajeCumplido(b) == null ? '—' : `${porcentajeCumplido(b)}%`}</td>
+                <td>{precio(b)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p style="margin-top: 12px;"><a class="cta" href={`/${cat.slug}`}>Ver todos los modelos →</a></p>
+      </section>
+    );
+  })}
+
+  <div class="aviso">
+    Las cifras "reales" salen de reportes publicados (reseñas y propietarios), no de mediciones propias de laboratorio.
+    Cada ficha enlaza sus fuentes para que las compruebes.
+  </div>
+
+  <h2 id="calculadora">Calcula tu autonomía real</h2>
+  <p class="subtitulo">Para bicis eléctricas: ajusta tu peso, terreno y nivel de asistencia y mira los km que te quedarían de verdad.</p>
+  <Calculadora />
+</Base>

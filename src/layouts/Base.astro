@@ -1,0 +1,94 @@
+---
+const { title, descripcion } = Astro.props;
+const tituloFull = title ? `${title} · autonomíareal` : 'autonomíareal · autonomía de verdad';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloFull}</title>
+    {descripcion && <meta name="description" content={descripcion} />}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🔋</text></svg>" />
+    <style is:global>
+      :root {
+        --tinta: #15201c;
+        --tinta-suave: #5a6b63;
+        --acento: #0f6e56;
+        --acento-bg: #e1f5ee;
+        --aviso: #854f0b;
+        --aviso-bg: #faeeda;
+        --linea: #e2e6e3;
+        --fondo: #f7f9f8;
+        --tarjeta: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: var(--tinta);
+        background: var(--fondo);
+        line-height: 1.6;
+      }
+      .contenedor { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+      header.sitio {
+        border-bottom: 1px solid var(--linea);
+        background: var(--tarjeta);
+      }
+      header.sitio .contenedor { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+      header.sitio a.logo { font-weight: 600; color: var(--tinta); text-decoration: none; font-size: 18px; }
+      header.sitio a.logo span { color: var(--acento); }
+      header.sitio nav a { color: var(--tinta-suave); text-decoration: none; margin-left: 18px; font-size: 15px; }
+      header.sitio nav a:hover { color: var(--acento); }
+      main { padding: 32px 0 56px; }
+      h1 { font-size: 30px; line-height: 1.25; margin: 0 0 10px; }
+      h2 { font-size: 22px; margin: 40px 0 14px; }
+      .subtitulo { color: var(--tinta-suave); font-size: 18px; margin: 0 0 8px; }
+      a { color: var(--acento); }
+      table.datos { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 12px; overflow: hidden; }
+      table.datos th, table.datos td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--linea); }
+      table.datos th { background: #f0f3f2; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .02em; color: var(--tinta-suave); }
+      table.datos tr:last-child td { border-bottom: none; }
+      table.datos td.real { font-weight: 600; color: var(--acento); }
+      table.datos td.sindato { color: var(--aviso); font-weight: 500; }
+      .pill { display: inline-block; background: var(--acento-bg); color: var(--acento); font-size: 13px; padding: 3px 10px; border-radius: 999px; }
+      .aviso { background: var(--aviso-bg); color: var(--aviso); border-radius: 10px; padding: 12px 16px; font-size: 14px; margin: 18px 0; }
+      .cta { display: inline-block; background: var(--acento); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; }
+      .fuentes { font-size: 13px; color: var(--tinta-suave); }
+      .fuentes a { color: var(--tinta-suave); }
+      footer.sitio { border-top: 1px solid var(--linea); padding: 28px 0; color: var(--tinta-suave); font-size: 13px; }
+      .grid-vs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+      .ficha { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 12px; padding: 18px; }
+      .ficha h3 { margin: 0 0 4px; font-size: 18px; }
+      .ficha .gran { font-size: 28px; font-weight: 700; color: var(--acento); }
+      @media (max-width: 640px) { .grid-vs { grid-template-columns: 1fr; } table.datos { font-size: 13px; } table.datos th, table.datos td { padding: 8px 9px; } }
+    </style>
+  </head>
+  <body>
+    <header class="sitio">
+      <div class="contenedor">
+        <a class="logo" href="/">autonomía<span>real</span></a>
+        <nav>
+          <a href="/bicis">Bicis</a>
+          <a href="/patines">Patines</a>
+          <a href="/comparador">Comparador</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <div class="contenedor">
+        <slot />
+      </div>
+    </main>
+    <footer class="sitio">
+      <div class="contenedor">
+        Datos de autonomía recopilados de reseñas y reportes de propietarios, con fuente citada en cada ficha.
+        Las cifras "reales" son estimaciones a partir de reportes publicados, no mediciones propias de laboratorio.
+        <br /><br />
+        Esta web contiene enlaces de afiliado: podemos recibir una comisión por las compras hechas a través de ellos,
+        sin coste adicional para ti. Esto no influye en los datos ni en las recomendaciones.
+      </div>
+    </footer>
+  </body>
+</html>

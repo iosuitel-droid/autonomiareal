@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import { productos, categoriaInfo, rangoReal, porcentajeCumplido, precio, motor } from '../../lib/ebikes.js';
+
+export function getStaticPaths() {
+  return productos.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const cat = categoriaInfo(p.categoria);
+const pct = porcentajeCumplido(p);
+---
+
+<Base
+  title={`${p.nombre}: autonomía real`}
+  descripcion={`Autonomía real de ${p.nombre} según reseñas y propietarios, frente a los ${p.autonomia_catalogo_km} km del catálogo.`}
+>
+  <p><a href={`/${p.categoria}`}>← {cat.nombre}</a></p>
+  <h1>{p.nombre}</h1>
+  <p class="subtitulo">{p.marca} · {precio(p)}</p>
+
+  <div class="grid-vs">
+    <div class="ficha">
+      <h3>Autonomía real</h3>
+      <div class="gran">{rangoReal(p)}</div>
+      <p class="fuentes">{p.calidad_dato}</p>
+    </div>
+    <div class="ficha">
+      <h3>Catálogo</h3>
+      <div class="gran" style="color: var(--tinta-suave)">{p.autonomia_catalogo_km} km</div>
+      <p class="fuentes">{pct == null ? 'Sin dato real para comparar' : `En la práctica se cumple un ${pct}%`}</p>
+    </div>
+  </div>
+
+  <h2>Ficha técnica</h2>
+  <table class="datos">
+    <tbody>
+      <tr><th>Batería</th><td>{p.bateria_wh} Wh</td></tr>
+      <tr><th>Peso</th><td>{p.peso_kg} kg</td></tr>
+      <tr><th>Motor</th><td>{motor(p)}</td></tr>
+      <tr><th>Autonomía catálogo</th><td>{p.autonomia_catalogo_km} km</td></tr>
+      <tr><th>Autonomía real</th><td class={p.autonomia_real_max_km == null ? 'sindato' : 'real'}>{rangoReal(p)}</td></tr>
+      <tr><th>Precio aprox.</th><td>{precio(p)}</td></tr>
+    </tbody>
+  </table>
+
+  {p.notas && <div class="aviso">{p.notas}</div>}
+
+  <p style="margin: 24px 0;">
+    {p.afiliado_url === '#' ? (
+      <span class="fuentes">Sin tienda con programa de afiliados para este modelo.</span>
+    ) : (
+      <a class="cta" href={p.afiliado_url} rel="sponsored nofollow noopener" target="_blank">Ver en {p.tienda} →</a>
+    )}
+  </p>
+
+  <h2>Fuentes</h2>
+  <ul class="fuentes">
+    {p.fuentes.map((u) => (
+      <li><a href={u} rel="nofollow noopener" target="_blank">{u}</a></li>
+    ))}
+  </ul>
+</Base>

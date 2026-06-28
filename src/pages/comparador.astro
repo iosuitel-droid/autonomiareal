@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import { productos, CATEGORIAS } from '../lib/ebikes.js';
+---
+
+<Base
+  title="Comparador de bicis y patines eléctricos"
+  descripcion="Elige hasta 3 modelos y compáralos en vivo: autonomía real, batería, peso y precio."
+>
+  <p><a href="/">← Inicio</a></p>
+  <span class="pill">Hasta 3 modelos a la vez</span>
+  <h1>Comparador</h1>
+  <p class="subtitulo">Elige categoría y modelos. Compara lo que importa: la autonomía real, no la del catálogo.</p>
+
+  <div class="cats" id="cats">
+    {CATEGORIAS.map((c, i) => (
+      <button class={`catbtn${i === 0 ? ' on' : ''}`} data-cat={c.slug} type="button">{c.nombre}</button>
+    ))}
+  </div>
+
+  <div class="chips" id="chips">
+    {productos.map((p) => (
+      <button class="chip" data-slug={p.slug} data-cat={p.categoria} type="button" aria-pressed="false">{p.nombre}</button>
+    ))}
+  </div>
+  <p class="chips-aviso" id="chips-aviso"></p>
+
+  <div class="tabla-scroll">
+    <table class="datos" id="tabla-comp"></table>
+  </div>
+
+  <script type="application/json" id="datos-comparador" set:html={JSON.stringify(productos)}></script>
+
+  <style>
+    .cats { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 8px; }
+    .catbtn { border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: var(--radius, 8px); padding: 8px 16px; font-size: 14px; cursor: pointer; font-weight: 500; }
+    .catbtn.on { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 6px; }
+    .chip { border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: 999px; padding: 8px 16px; font-size: 14px; cursor: pointer; transition: all .12s; }
+    .chip:hover { border-color: var(--acento); }
+    .chip.on { background: var(--acento); color: #fff; border-color: var(--acento); }
+    .chip.oculto { display: none; }
+    .chips-aviso { font-size: 13px; color: var(--aviso); min-height: 18px; margin: 4px 0 18px; }
+    .tabla-scroll { overflow-x: auto; }
+    #tabla-comp :global(td.gana) { background: var(--acento-bg); }
+    #tabla-comp :global(td.real-row) { font-weight: 600; color: var(--acento); }
+    #tabla-comp :global(.cta) { padding: 7px 12px; font-size: 13px; }
+  </style>
+
+  <script>
+    const productos = JSON.parse(document.getElementById('datos-comparador').textContent);
+    const MAX = 3;
+    let catActiva = productos[0].categoria;
+    let seleccion = new Set();
+
+    const fmtPrecio = (n) =>
+      new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+
+    function rangoReal(b) {
+      if (b.autonomia_real_min_km == null || b.autonomia_real_max_km == null) return 'sin datos';
+      if (b.autonomia_real_min_km === b.autonomia_real_max_km) return `~${b.autonomia_real_min_km} km`;
+      return `~${b.autonomia_real_min_km}-${b.autonomia_real_max_km} km`;
+    }
+    function realMedia(b) {
+      if (b.autonomia_real_min_km == null || b.autonomia_real_max_km == null) return null;
+      return (b.autonomia_real_min_km + b.autonomia_real_max_km) / 2;
+    }
+    function pct(b) {
+      const m = realMedia(b);
+      if (m == null || !b.autonomia_catalogo_km) return null;
+      return Math.round((m / b.autonomia_catalogo_km) * 100);
+    }
+    function motorTxt(b) {
+      return b.par_nm == null ? `${b.motor_w} W` : `${b.motor_w} W · ${b.par_nm} Nm`;
+    }
+
+    const filas = [
+      { etq: 'Batería', val: (b) => `${b.bateria_wh} Wh` },
+      { etq: 'Peso', val: (b) => `${b.peso_kg} kg` },
+      { etq: 'Motor', val: (b) => motorTxt(b) },
+      { etq: 'Catálogo', val: (b) => `${b.autonomia_catalogo_km} km` },
+      { etq: 'Autonomía real', val: (b) => rangoReal(b), real: true },
+      { etq: 'Cumple', val: (b) => (pct(b) == null ? '—' : `${pct(b)}%`) },
+      { etq: 'Precio', val: (b) => fmtPrecio(b.precio_eur) },
+    ];
+
+    function resetSeleccion() {
+      seleccion = new Set(productos.filter((p) => p.categoria === catActiva).slice(0, 3).map((p) => p.slug));
+    }
+
+    function render() {
+      const sel = productos.filter((p) => seleccion.has(p.slug));
+
+      document.querySelectorAll('.catbtn').forEach((c) => c.classList.toggle('on', c.dataset.cat === catActiva));
+      document.querySelectorAll('.chip').forEach((c) => {
+        c.classList.toggle('oculto', c.dataset.cat !== catActiva);
+        const on = seleccion.has(c.dataset.slug);
+        c.classList.toggle('on', on);
+        c.setAttribute('aria-pressed', String(on));
+      });
+
+      let best = null;
+      sel.forEach((b) => {
+        const m = realMedia(b);
+        if (m != null && (best == null || m > realMedia(best))) best = b;
+      });
+
+      const tabla = document.getElementById('tabla-comp');
+      let html = '<thead><tr><th></th>' + sel.map((b) => `<th>${b.nombre}</th>`).join('') + '</tr></thead><tbody>';
+      filas.forEach((f) => {
+        html += `<tr><th>${f.etq}</th>`;
+        sel.forEach((b) => {
+          const ganadora = f.real && best && b.slug === best.slug && sel.length > 1;
+          const cls = (f.real ? 'real-row ' : '') + (ganadora ? 'gana' : '');
+          html += `<td class="${cls.trim()}">${f.val(b)}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '<tr><th></th>' + sel.map((b) => `<td><a class="cta" href="/ficha/${b.slug}">Ver ficha →</a></td>`).join('') + '</tr>';
+      html += '</tbody>';
+      tabla.innerHTML = html;
+    }
+
+    document.getElementById('cats').addEventListener('click', (e) => {
+      const btn = e.target.closest('.catbtn');
+      if (!btn) return;
+      catActiva = btn.dataset.cat;
+      document.getElementById('chips-aviso').textContent = '';
+      resetSeleccion();
+      render();
+    });
+
+    document.getElementById('chips').addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      const slug = chip.dataset.slug;
+      const aviso = document.getElementById('chips-aviso');
+      aviso.textContent = '';
+      if (seleccion.has(slug)) {
+        if (seleccion.size === 1) {
+          aviso.textContent = 'Deja al menos un modelo seleccionado.';
+          return;
+        }
+        seleccion.delete(slug);
+      } else {
+        if (seleccion.size >= MAX) {
+          aviso.textContent = `Máximo ${MAX} modelos a la vez. Quita uno para añadir otro.`;
+          return;
+        }
+        seleccion.add(slug);
+      }
+      render();
+    });
+
+    resetSeleccion();
+    render();
+  </script>
+</Base>
