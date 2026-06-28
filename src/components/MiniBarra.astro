@@ -1,0 +1,20 @@
+---
+const { pct } = Astro.props;
+---
+
+{pct == null ? (
+  <span class="mb-na">—</span>
+) : (
+  <span class="mb">
+    <span class="mb-track"><span class="mb-fill" style={`width:${Math.min(100, pct)}%`}></span></span>
+    <span class="mb-num">{pct}%</span>
+  </span>
+)}
+
+<style>
+  .mb { display: inline-flex; align-items: center; gap: 8px; }
+  .mb-track { width: 54px; height: 8px; background: #eef1f0; border-radius: 4px; overflow: hidden; }
+  .mb-fill { display: block; height: 100%; background: var(--acento); border-radius: 4px; }
+  .mb-num { font-size: 13px; color: var(--tinta-suave); }
+  .mb-na { color: var(--tinta-suave); }
+</style>

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Calculadora from '../components/Calculadora.astro';
+import MiniBarra from '../components/MiniBarra.astro';
 import { CATEGORIAS, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplido, precio } from '../lib/ebikes.js';
 ---
 
@@ -30,7 +31,7 @@ import { CATEGORIAS, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplid
                 <td><a href={`/ficha/${b.slug}`}>{b.nombre}</a></td>
                 <td>{b.autonomia_catalogo_km} km</td>
                 <td class={b.autonomia_real_max_km == null ? 'sindato' : 'real'}>{rangoReal(b)}</td>
-                <td>{porcentajeCumplido(b) == null ? '—' : `${porcentajeCumplido(b)}%`}</td>
+                <td><MiniBarra pct={porcentajeCumplido(b)} /></td>
                 <td>{precio(b)}</td>
               </tr>
             ))}

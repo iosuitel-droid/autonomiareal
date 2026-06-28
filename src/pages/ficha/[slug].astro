@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import BarraAutonomia from '../../components/BarraAutonomia.astro';
 import { productos, categoriaInfo, rangoReal, porcentajeCumplido, precio, motor } from '../../lib/ebikes.js';
 
 export function getStaticPaths() {
@@ -48,18 +49,10 @@ const jsonLd = {
   <h1>{p.nombre}</h1>
   <p class="subtitulo">{p.marca} · {precio(p)}</p>
 
-  <div class="grid-vs">
-    <div class="ficha">
-      <h3>Autonomía real</h3>
-      <div class="gran">{rangoReal(p)}</div>
-      <p class="fuentes">{p.calidad_dato}</p>
-    </div>
-    <div class="ficha">
-      <h3>Catálogo</h3>
-      <div class="gran" style="color: var(--tinta-suave)">{p.autonomia_catalogo_km} km</div>
-      <p class="fuentes">{pct == null ? 'Sin dato real para comparar' : `En la práctica se cumple un ${pct}%`}</p>
-    </div>
-  </div>
+  {p.imagen && <img src={p.imagen} alt={p.nombre} loading="lazy" class="prod-img" />}
+
+  <BarraAutonomia p={p} />
+  <p class="fuentes">Dato real: {p.calidad_dato}</p>
 
   <h2>Ficha técnica</h2>
   <table class="datos">

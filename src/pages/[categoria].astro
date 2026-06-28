@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import MiniBarra from '../components/MiniBarra.astro';
 import { CATEGORIAS, categoriaInfo, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplido, precio, parejas, COLECCIONES } from '../lib/ebikes.js';
 
 export function getStaticPaths() {
@@ -28,7 +29,7 @@ const pares = parejas(cat.slug);
           <td>{b.bateria_wh} Wh</td>
           <td>{b.autonomia_catalogo_km} km</td>
           <td class={b.autonomia_real_max_km == null ? 'sindato' : 'real'}>{rangoReal(b)}</td>
-          <td>{porcentajeCumplido(b) == null ? '—' : `${porcentajeCumplido(b)}%`}</td>
+          <td><MiniBarra pct={porcentajeCumplido(b)} /></td>
           <td>{precio(b)}</td>
         </tr>
       ))}
