@@ -15,6 +15,25 @@ import { CATEGORIAS, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplid
     Los fabricantes prometen el doble de lo que aguantan. Aquí está lo que reportan propietarios y reseñas, con fuente, para bicis y patines eléctricos.
   </p>
 
+  <div class="comofunciona">
+    <div class="cf-card">
+      <div class="cf-num">1</div>
+      <h3>Recogemos el dato real</h3>
+      <p>De reseñas y reportes de propietarios, no del folleto del fabricante.</p>
+    </div>
+    <div class="cf-card">
+      <div class="cf-num">2</div>
+      <h3>Lo comparamos con el catálogo</h3>
+      <p>Verás cuánto infla cada marca: casi siempre prometen el doble de lo que cumplen.</p>
+    </div>
+    <div class="cf-card">
+      <div class="cf-num">3</div>
+      <h3>Con la fuente a la vista</h3>
+      <p>Cada cifra enlaza de dónde sale. Si no hay dato fiable, lo decimos.</p>
+    </div>
+  </div>
+  <p style="margin: 0 0 8px;"><a href="/metodologia">Cómo lo hacemos y por qué fiarte →</a></p>
+
   {CATEGORIAS.map((cat) => {
     const items = ordenadaPorReal(porCategoria(cat.slug)).slice(0, 5);
     return (

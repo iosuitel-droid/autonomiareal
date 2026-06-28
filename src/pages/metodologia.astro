@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { productos, CATEGORIAS } from '../lib/ebikes.js';
+const total = productos.length;
+const cats = CATEGORIAS.length;
+---
+
+<Base
+  title="Cómo lo hacemos"
+  descripcion="Qué es autonomíareal, cómo conseguimos los datos de autonomía real y por qué puedes fiarte. Transparencia y fuentes."
+>
+  <p><a href="/">← Inicio</a></p>
+  <h1>Cómo lo hacemos</h1>
+  <p class="subtitulo">Qué es esto, de dónde sale cada dato y por qué puedes fiarte.</p>
+
+  <h2>Qué es autonomíareal</h2>
+  <p>
+    Una web independiente que publica la <strong>autonomía real</strong> de la micromovilidad eléctrica —bicis plegables
+    y patines— frente a la que anuncia el catálogo. Los fabricantes prometen 100-130 km en bicis y 35-70 en patines;
+    lo que la gente hace de verdad suele ser la mitad. Aquí ponemos las dos cifras una al lado de la otra, con la fuente
+    a la vista. Hoy cubrimos {total} modelos en {cats} categorías, y vamos sumando.
+  </p>
+
+  <h2>De dónde sale el dato real</h2>
+  <p>
+    Seamos claros, porque es lo que nos diferencia: <strong>no medimos las cifras en un laboratorio propio</strong>.
+    Lo que hacemos es <strong>recopilar y estructurar</strong> lo que ya está disperso: pruebas de reseñas profesionales,
+    reportes de propietarios en foros y opiniones, y tests publicados. Cada modelo indica de qué tipo de fuente sale su
+    dato real, y enlaza las fuentes para que lo compruebes tú mismo.
+  </p>
+  <p>
+    Por eso las cifras reales son <strong>estimaciones a partir de reportes publicados</strong>, presentadas como un rango,
+    no un número de laboratorio. Y cuando no encontramos reportes fiables de un modelo, no nos lo inventamos:
+    lo marcamos como <strong>"sin datos"</strong>.
+  </p>
+
+  <h2>Por qué puedes fiarte</h2>
+  <ul>
+    <li><strong>Cada cifra tiene fuente.</strong> No publicamos un dato que no podamos enlazar.</li>
+    <li><strong>Publicamos el dato aunque sea incómodo.</strong> Si una marca cumple el 54% de lo que promete, ahí lo decimos.</li>
+    <li><strong>"Sin datos" antes que inventar.</strong> Preferimos un hueco honesto a un número de relleno.</li>
+    <li><strong>Somos independientes.</strong> Ninguna marca nos paga por salir ni por puntuar mejor.</li>
+  </ul>
+
+  <h2>Cómo nos financiamos</h2>
+  <p>
+    Con <strong>enlaces de afiliado</strong>: si compras a través de un enlace de la web, podemos llevarnos una pequeña
+    comisión, sin coste adicional para ti. Eso <strong>no cambia los datos ni las recomendaciones</strong> —el dato real
+    es el que es, lo enlacemos donde lo enlacemos—. Cuando hay un sitio más barato sin programa de afiliados, lo decimos
+    igualmente en la ficha.
+  </p>
+
+  <h2>Quién está detrás</h2>
+  <p>
+    Un proyecto independiente, nacido del cabreo de comprar pensando en una autonomía que luego no era real.
+    Si quieres proponer un modelo, corregir un dato o señalar una fuente mejor, escríbenos.
+  </p>
+  <p class="fuentes">
+    <em>(Personaliza esta sección con tu nombre, foto o contacto cuando quieras — da aún más confianza.)</em>
+  </p>
+</Base>

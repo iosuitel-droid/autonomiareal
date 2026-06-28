@@ -63,6 +63,16 @@ const tituloFull = title ? `${title} · autonomíareal` : 'autonomíareal · aut
       .ficha h3 { margin: 0 0 4px; font-size: 18px; }
       .ficha .gran { font-size: 28px; font-weight: 700; color: var(--acento); }
       .prod-img { display: block; max-width: 320px; width: 100%; height: auto; border: 1px solid var(--linea); border-radius: 12px; background: #fff; padding: 12px; margin: 4px 0 8px; }
+      .comofunciona { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 22px 0 14px; }
+      .cf-card { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 12px; padding: 18px; }
+      .cf-card .cf-num { width: 28px; height: 28px; border-radius: 50%; background: var(--acento-bg); color: var(--acento); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 15px; margin-bottom: 10px; }
+      .cf-card h3 { margin: 0 0 6px; font-size: 16px; }
+      .cf-card p { margin: 0; font-size: 14px; color: var(--tinta-suave); line-height: 1.5; }
+      @media (max-width: 760px) {
+        header.sitio .contenedor { flex-direction: column; align-items: flex-start; height: auto; padding: 10px 20px; gap: 8px; }
+        header.sitio nav { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+        header.sitio nav a { margin-left: 0; font-size: 14px; }
+      }
       @media (max-width: 640px) { .grid-vs { grid-template-columns: 1fr; } table.datos { font-size: 13px; } table.datos th, table.datos td { padding: 8px 9px; } }
     </style>
   </head>
@@ -74,6 +84,7 @@ const tituloFull = title ? `${title} · autonomíareal` : 'autonomíareal · aut
           <a href="/bicis">Bicis</a>
           <a href="/patines">Patines</a>
           <a href="/comparador">Comparador</a>
+          <a href="/metodologia">Cómo lo hacemos</a>
         </nav>
       </div>
     </header>
@@ -84,6 +95,7 @@ const tituloFull = title ? `${title} · autonomíareal` : 'autonomíareal · aut
     </main>
     <footer class="sitio">
       <div class="contenedor">
+        <p style="margin: 0 0 14px;"><a href="/metodologia">Cómo lo hacemos</a> · <a href="/comparador">Comparador</a></p>
         Datos de autonomía recopilados de reseñas y reportes de propietarios, con fuente citada en cada ficha.
         Las cifras "reales" son estimaciones a partir de reportes publicados, no mediciones propias de laboratorio.
         <br /><br />
