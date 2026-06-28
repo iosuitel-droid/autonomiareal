@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { CATEGORIAS, categoriaInfo, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplido, precio, parejas } from '../lib/ebikes.js';
+import { CATEGORIAS, categoriaInfo, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplido, precio, parejas, COLECCIONES } from '../lib/ebikes.js';
 
 export function getStaticPaths() {
   return CATEGORIAS.map((c) => ({ params: { categoria: c.slug }, props: { cat: c } }));
@@ -34,6 +34,13 @@ const pares = parejas(cat.slug);
       ))}
     </tbody>
   </table>
+
+  <h2>Rankings</h2>
+  <ul>
+    {COLECCIONES.map((col) => (
+      <li><a href={`/${cat.slug}/${col.slug}`}>{cat.nombre} {col.h1}</a></li>
+    ))}
+  </ul>
 
   <h2>Comparativas cara a cara</h2>
   <p class="subtitulo">¿Prefieres elegir tú? Usa el <a href="/comparador">comparador interactivo</a>.</p>

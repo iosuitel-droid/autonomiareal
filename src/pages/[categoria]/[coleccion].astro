@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import { todasColecciones, porCategoria, ordenarColeccion, rangoReal, porcentajeCumplido, precio } from '../../lib/ebikes.js';
+
+export function getStaticPaths() {
+  return todasColecciones().map(({ cat, col }) => ({
+    params: { categoria: cat.slug, coleccion: col.slug },
+    props: { cat, col },
+  }));
+}
+
+const { cat, col } = Astro.props;
+const items = ordenarColeccion(porCategoria(cat.slug), col.slug);
+---
+
+<Base
+  title={`${cat.nombre} — ${col.h1}`}
+  descripcion={`${cat.nombre} ordenados por ${col.h1}. Autonomía real vs catálogo, con fuente.`}
+>
+  <p><a href={`/${cat.slug}`}>← {cat.nombre}</a></p>
+  <h1>{cat.nombre} — {col.h1}</h1>
+  <p class="subtitulo">{col.intro}</p>
+
+  <table class="datos">
+    <thead>
+      <tr><th>#</th><th>Modelo</th><th>Batería</th><th>Peso</th><th>Catálogo</th><th>Real</th><th>Precio</th></tr>
+    </thead>
+    <tbody>
+      {items.map((b, i) => (
+        <tr>
+          <td>{i + 1}</td>
+          <td><a href={`/ficha/${b.slug}`}>{b.nombre}</a></td>
+          <td>{b.bateria_wh} Wh</td>
+          <td>{b.peso_kg} kg</td>
+          <td>{b.autonomia_catalogo_km} km</td>
+          <td class={b.autonomia_real_max_km == null ? 'sindato' : 'real'}>{rangoReal(b)}</td>
+          <td>{precio(b)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</Base>

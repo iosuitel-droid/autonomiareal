@@ -9,7 +9,36 @@ export function getStaticPaths() {
 const { p } = Astro.props;
 const cat = categoriaInfo(p.categoria);
 const pct = porcentajeCumplido(p);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: p.nombre,
+  brand: { '@type': 'Brand', name: p.marca },
+  category: cat.nombre,
+  url: `https://autonomiareal.com/ficha/${p.slug}`,
+  additionalProperty: [
+    { '@type': 'PropertyValue', name: 'Autonomía real estimada', value: rangoReal(p) },
+    { '@type': 'PropertyValue', name: 'Autonomía de catálogo', value: `${p.autonomia_catalogo_km} km` },
+    { '@type': 'PropertyValue', name: 'Batería', value: `${p.bateria_wh} Wh` },
+    { '@type': 'PropertyValue', name: 'Peso', value: `${p.peso_kg} kg` },
+  ],
+  ...(p.afiliado_url !== '#'
+    ? {
+        offers: {
+          '@type': 'Offer',
+          price: p.precio_eur,
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+          url: `https://autonomiareal.com/ficha/${p.slug}`,
+        },
+      }
+    : {}),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
 
 <Base
   title={`${p.nombre}: autonomía real`}

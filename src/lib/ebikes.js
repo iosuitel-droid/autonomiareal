@@ -68,3 +68,21 @@ export function parejas(cat) {
 export function todasParejas() {
   return CATEGORIAS.flatMap((c) => parejas(c.slug));
 }
+
+export const COLECCIONES = [
+  { slug: 'mas-autonomia-real', nav: 'Por autonomía real', h1: 'autonomía real, de más a menos', intro: 'Ordenados por la autonomía real reportada, no por la del catálogo.' },
+  { slug: 'mas-ligeras', nav: 'Por peso', h1: 'peso, de más ligero a más pesado', intro: 'Del modelo más ligero al más pesado. Clave si lo subes a casa o al transporte público.' },
+  { slug: 'mas-baratas', nav: 'Por precio', h1: 'precio, de más barato a más caro', intro: 'Del más barato al más caro, con su autonomía real al lado para ver qué compensa.' },
+];
+
+export function ordenarColeccion(items, slug) {
+  const arr = [...items];
+  if (slug === 'mas-autonomia-real') return arr.sort((a, b) => (realMedia(b) ?? -1) - (realMedia(a) ?? -1));
+  if (slug === 'mas-ligeras') return arr.sort((a, b) => a.peso_kg - b.peso_kg);
+  if (slug === 'mas-baratas') return arr.sort((a, b) => a.precio_eur - b.precio_eur);
+  return arr;
+}
+
+export function todasColecciones() {
+  return CATEGORIAS.flatMap((c) => COLECCIONES.map((col) => ({ cat: c, col })));
+}
