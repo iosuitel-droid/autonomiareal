@@ -34,6 +34,11 @@ import { CATEGORIAS, porCategoria, ordenadaPorReal, rangoReal, porcentajeCumplid
   </div>
   <p style="margin: 0 0 8px;"><a href="/metodologia">Cómo lo hacemos y por qué fiarte →</a></p>
 
+  <a href="/analisis" class="banner-informe">
+    <strong>El informe de la autonomía real</strong>
+    <span>Analizamos 23 modelos: de media, los fabricantes solo cumplen el 64% de lo que prometen. Ver el estudio →</span>
+  </a>
+
   {CATEGORIAS.map((cat) => {
     const items = ordenadaPorReal(porCategoria(cat.slug)).slice(0, 5);
     return (

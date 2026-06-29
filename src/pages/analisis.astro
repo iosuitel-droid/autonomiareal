@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import MiniBarra from '../components/MiniBarra.astro';
+import { productos, CATEGORIAS, realMedia, rangoReal, porcentajeCumplido, precio } from '../lib/ebikes.js';
+
+const conDatos = productos.filter((p) => realMedia(p) != null);
+const pctOf = (p) => Math.round((realMedia(p) / p.autonomia_catalogo_km) * 100);
+const mediaTotal = Math.round(conDatos.reduce((s, p) => s + pctOf(p), 0) / conDatos.length);
+const inflanMedio = 100 - mediaTotal;
+
+const porCat = CATEGORIAS.map((c) => {
+  const items = conDatos.filter((p) => p.categoria === c.slug);
+  return { nombre: c.nombre, slug: c.slug, n: items.length, media: Math.round(items.reduce((s, p) => s + pctOf(p), 0) / items.length) };
+});
+
+const masInflan = [...conDatos].sort((a, b) => pctOf(a) - pctOf(b)).slice(0, 5);
+const masCumplen = [...conDatos].sort((a, b) => pctOf(b) - pctOf(a)).slice(0, 5);
+---
+
+<Base
+  title="El informe de la autonomía real"
+  descripcion={`Analizamos ${conDatos.length} bicis y patines eléctricos: de media, los fabricantes solo cumplen el ${mediaTotal}% de la autonomía que prometen.`}
+>
+  <p><a href="/">← Inicio</a></p>
+  <span class="pill">Estudio sobre {conDatos.length} modelos con datos reales</span>
+  <h1>El informe de la autonomía real</h1>
+  <p class="subtitulo">
+    Cogimos {conDatos.length} bicis y patines eléctricos, comparamos la autonomía que anuncia cada fabricante con la
+    que reportan reseñas y propietarios, y salió esto.
+  </p>
+
+  <div class="cifra-grande">
+    <div class="cifra-num">{mediaTotal}%</div>
+    <div class="cifra-txt">
+      es lo que <strong>de media</strong> cumplen los fabricantes de la autonomía que prometen. Dicho de otro modo:
+      <strong>inflan la cifra un {inflanMedio}% de media</strong>.
+    </div>
+  </div>
+
+  <h2>Por categoría</h2>
+  <div class="cat-grid">
+    {porCat.map((c) => (
+      <div class="cat-card">
+        <div class="cat-pct">{c.media}%</div>
+        <div class="cat-nom"><a href={`/${c.slug}`}>{c.nombre}</a></div>
+        <div class="fuentes">media de cumplimiento · {c.n} modelos</div>
+      </div>
+    ))}
+  </div>
+
+  <h2>Los que más inflan</h2>
+  <p class="subtitulo">Prometen mucho y cumplen poco. Aquí es donde más te la cuelan.</p>
+  <table class="datos">
+    <thead>
+      <tr><th>Modelo</th><th>Catálogo</th><th>Real</th><th>Cumple</th></tr>
+    </thead>
+    <tbody>
+      {masInflan.map((b) => (
+        <tr>
+          <td><a href={`/ficha/${b.slug}`}>{b.nombre}</a></td>
+          <td>{b.autonomia_catalogo_km} km</td>
+          <td class="real">{rangoReal(b)}</td>
+          <td><MiniBarra pct={porcentajeCumplido(b)} /></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2>Los que sí cumplen</h2>
+  <p class="subtitulo">No todo es humo: estos dan lo que prometen (o más). Que cada cual saque conclusiones.</p>
+  <table class="datos">
+    <thead>
+      <tr><th>Modelo</th><th>Catálogo</th><th>Real</th><th>Cumple</th></tr>
+    </thead>
+    <tbody>
+      {masCumplen.map((b) => (
+        <tr>
+          <td><a href={`/ficha/${b.slug}`}>{b.nombre}</a></td>
+          <td>{b.autonomia_catalogo_km} km</td>
+          <td class="real">{rangoReal(b)}</td>
+          <td><MiniBarra pct={porcentajeCumplido(b)} /></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <div class="aviso">
+    Las cifras "reales" son estimaciones a partir de reportes publicados (reseñas y propietarios), no mediciones propias
+    de laboratorio. Cada modelo enlaza sus fuentes. Más sobre el método en <a href="/metodologia">cómo lo hacemos</a>.
+  </div>
+
+  <style>
+    .cifra-grande { display: flex; align-items: center; gap: 22px; background: var(--acento-bg); border-radius: 14px; padding: 26px; margin: 22px 0; flex-wrap: wrap; }
+    .cifra-num { font-size: 64px; font-weight: 700; color: var(--acento); line-height: 1; }
+    .cifra-txt { flex: 1; min-width: 220px; font-size: 17px; color: var(--acento); }
+    .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 14px 0; }
+    .cat-card { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 12px; padding: 18px; }
+    .cat-pct { font-size: 32px; font-weight: 700; color: var(--acento); }
+    .cat-nom { font-size: 16px; font-weight: 500; margin-top: 2px; }
+  </style>
+</Base>
